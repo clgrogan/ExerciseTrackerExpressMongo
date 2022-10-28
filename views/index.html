@@ -53,7 +53,7 @@
       <form id="exercise-log" method="get">
         <h3>Get Exercise Log for User by ID</h3>
         <p><code>GET /api/users/:_id/logs</code></p>
-        <input id="uid" type="text" name=":_id" placeholder=":_id" />
+        <input id="getuid" type="text" name=":_id" placeholder=":_id" />
         <input type="submit" value="Submit" />
       </form>
       <p>
@@ -80,7 +80,7 @@
       const exerciseLog = document.getElementById("exercise-log");
 
       exerciseLog.addEventListener("submit", () => {
-        const userId = document.getElementById("uid").value;
+        const userId = document.getElementById("getuid").value;
         exerciseLog.action = `/api/users/${userId}/logs`;
 
         exerciseLog.submit();
