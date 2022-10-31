@@ -17,7 +17,7 @@
 		"nodemon": "^2.0.20"
 	},
 	"repository": {
-		"url": "https://github.com/freeCodeCamp/boilerplate-project-exercisetracker"
+		"url": "https://github.com/clgrogan/ExerciseTrackerExpressMongo"
 	},
 	"license": "MIT",
 	"keywords": [
