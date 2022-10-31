@@ -42,7 +42,7 @@ app.get("/api/users", (req, res) => {
       console.error("Oops! Something went wrong \n", err);
       res.send("Oops! Something went wrong when attempting retrieve users... \n", err);
     } else if (!data) {
-      console.log("No users found!!!");
+      console.error("No users found!!!");
       res.send("No users found!!!");
     } else {
       res.json(data);
@@ -55,6 +55,9 @@ app.get("/api/users/:_id/logs", (req, res) => {
   console.log("\n!!!\n/api/users/:_id/logs");
   console.log("req.params ", req.params);
   console.log("req.body ", req.body);
+  // ?from=yyy-mm-dd&to=yyy-mm-dd&limit=number
+  console.log("req.query ", req.query);
+  const { fromDate, toDate, limit } = new Date(req.query);
   const userId = req.params._id;
   let userLogs =
     { username: null, count: 0, _id: userId, log: [] };
@@ -66,7 +69,11 @@ app.get("/api/users/:_id/logs", (req, res) => {
       console.log("what was found? - " + userData);
       userLogs.username = userData.username;
       // res.json(userLogs);
-      Exercise.find({ userid: userId }, function (err, data) {
+      // experiment
+      const findLogsByUserid = Exercise.find({  userid: userId  });
+      findLogsByUserid.limit(limit).exec(function (err, data) {
+      // experiment end
+      // Exercise.find({ userid: userId }, function (err, data) {
         if (err) {
           return console.err("Error finding exercise logs: ", err);
         } else {
@@ -80,10 +87,9 @@ app.get("/api/users/:_id/logs", (req, res) => {
             });
           }
           res.json(userLogs);
-          // console.log("\nuserLogs.log\n",userLogs.log);
         }
       });
-    }      
+    }
   });
 });
 
