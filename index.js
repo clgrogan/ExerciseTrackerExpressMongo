@@ -55,9 +55,13 @@ app.get("/api/users/:_id/logs", (req, res) => {
   console.log("\n!!!\n/api/users/:_id/logs");
   console.log("req.params ", req.params);
   console.log("req.body ", req.body);
-  // ?from=yyy-mm-dd&to=yyy-mm-dd&limit=number
   console.log("req.query ", req.query);
-  const { fromDate, toDate, limit } = new Date(req.query);
+  const queryDate = {};
+  const dateQueryString = (req.query.from || req.query.to) ? ("date: ", queryDate) : "";
+  console.log("dateQueryString: ", dateQueryString);
+  const fromDate = req.query.from;
+  const toDate = req.query.to;
+  const limit = req.query.limit ? new Number(req.query.limit) : new Number(1000);
   const userId = req.params._id;
   let userLogs =
     { username: null, count: 0, _id: userId, log: [] };
@@ -70,12 +74,16 @@ app.get("/api/users/:_id/logs", (req, res) => {
       userLogs.username = userData.username;
       // res.json(userLogs);
       // experiment
-      const findLogsByUserid = Exercise.find({  userid: userId  });
+      const exerciseFilter = buildExerciseFilter(userId, fromDate, toDate);
+      console.log("\n\nexerciseFilter:\n\t", exerciseFilter);
+      const findLogsByUserid = Exercise.find(exerciseFilter);
+      // date: {$gte: d.getTime()}
+      // .select({date:  { '$gte': new Date("Thu, 02 Apr 2020 14:59:38 GMT") } })
       findLogsByUserid.limit(limit).exec(function (err, data) {
-      // experiment end
-      // Exercise.find({ userid: userId }, function (err, data) {
+        // experiment end
+        // Exercise.find({ userid: userId }, function (err, data) {
         if (err) {
-          return console.err("Error finding exercise logs: ", err);
+          return console.error("Error finding exercise logs: ", err);
         } else {
           // console.error(data);
           for (i = 0; i < data.length; i++) {
@@ -149,13 +157,19 @@ app.post("/api/users/:_id/exercises", (req, res) => {
 
 });
 
-// functions
-const getUsernameById = (userId) => {
-  const user = User.findById(userId, function (err, data) {
-    if (err) return null;
-    return data;
-  });
-  return user;
+const buildExerciseFilter = (userId, from, to) => {
+  let filter = {};
+  filter.userid = userId;
+  let dateQuery = new Object();
+  console.log("\nbuildExerciseFilter from: ", from,
+  "\n\tnew Date(from): ",new Date(from));
+  if (from)
+    dateQuery["$gte"] = new Date(from);
+  if (to)
+    dateQuery["$lte"] = new Date(to);
+    if (from || to) filter.date = dateQuery;
+
+  return filter;
 }
 
 

@@ -54,6 +54,14 @@
         <h3>Get Exercise Log for User by ID</h3>
         <p><code>GET /api/users/:_id/logs</code></p>
         <input id="getuid" type="text" name=":_id" placeholder=":_id" />
+        <input
+          id="limit"
+          type="number"
+          min="0"
+          step="1"
+          name="limit"
+          placeholder="Number: limit number of results"
+        />
         <input type="submit" value="Submit" />
       </form>
       <p>
@@ -81,7 +89,8 @@
 
       exerciseLog.addEventListener("submit", () => {
         const userId = document.getElementById("getuid").value;
-        exerciseLog.action = `/api/users/${userId}/logs`;
+        const limitQuery = document.getElementById("limit").value;
+        exerciseLog.action = `/api/users/${userId}/logs?limit:${limitQuery}`;
 
         exerciseLog.submit();
       });
